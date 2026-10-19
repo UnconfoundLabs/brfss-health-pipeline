@@ -68,6 +68,19 @@ jobs:
         working-directory: dbt_brfss
         run: dbt compile
 
+      - name: Load synthetic BRFSS fixture (not real CDC data)
+        run: |
+          python -m tests.fixtures.make_synthetic_brfss --rows 20000
+          python -m ingestion.load_to_duckdb
+
+      - name: dbt run on synthetic fixture (catches missing columns compile can't)
+        working-directory: dbt_brfss
+        run: dbt run
+
+      - name: dbt test on synthetic fixture
+        working-directory: dbt_brfss
+        run: dbt test
+
       - name: sqlfluff lint dbt models
         working-directory: dbt_brfss
         run: sqlfluff lint models/ --dialect duckdb --templater dbt || true

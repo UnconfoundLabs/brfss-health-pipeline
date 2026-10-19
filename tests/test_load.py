@@ -45,7 +45,10 @@ def test_initialize_database_creates_schemas(tmp_path):
 
     db_path = tmp_path / "test.duckdb"
     con = initialize_database(db_path)
-    schemas = [row[0] for row in con.execute("SHOW SCHEMAS").fetchall()]
+    schemas = [
+        row[0]
+        for row in con.execute("SELECT schema_name FROM information_schema.schemata").fetchall()
+    ]
     assert "raw" in schemas
     assert "staging" in schemas
     assert "intermediate" in schemas

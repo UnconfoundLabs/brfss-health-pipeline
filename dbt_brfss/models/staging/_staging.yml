@@ -26,7 +26,7 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: "state_fips BETWEEN 1 AND 78"
+              expression: "BETWEEN 1 AND 78"
 
       - name: llcpwt
         description: Survey weight. Must be > 0 (zero-weight records are filtered out).
@@ -39,7 +39,7 @@ models:
         description: Body Mass Index (original _BMI5 divided by 100). NULL if missing.
         tests:
           - dbt_utils.expression_is_true:
-              expression: "bmi_calc IS NULL OR (bmi_calc BETWEEN 10.0 AND 100.0)"
+              expression: "IS NULL OR (bmi_calc BETWEEN 10.0 AND 100.0)"
               name: bmi_calc_in_plausible_range
 
       - name: diabetes_status
@@ -62,3 +62,21 @@ models:
 
       - name: age_group
         description: Age group label derived from _AGEG5YR codes.
+
+      - name: fruit_frequency
+        description: >
+          Fruit (not juice) consumption in times per day, converted from FRUIT2.
+          NULL for don't know/refused and in years the fruit/vegetable module was not asked.
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "IS NULL OR fruit_frequency >= 0"
+              name: fruit_frequency_non_negative
+
+      - name: vegetable_frequency
+        description: >
+          "Other vegetables" consumption in times per day, converted from VEGETAB2
+          (excludes lettuce salads and potatoes). NULL as for fruit_frequency.
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "IS NULL OR vegetable_frequency >= 0"
+              name: vegetable_frequency_non_negative

@@ -7,7 +7,7 @@
     1. Obesity       — bmi_category = 'Obese'
     2. Hypertension  — has_hypertension = true
     3. Inactivity    — physical_activity_index = 'Inactive'
-    4. Poor diet     — fruit + vegetable consumption below threshold
+    4. Poor diet     — vegetable (VEGETAB2) consumption less than once per day
     5. Diabetes      — is_diagnosed_diabetic = true
 
   Score is NULL if all five inputs are NULL (no data for respondent).
@@ -49,11 +49,11 @@ scored as (
         case when s.any_exercise_past_30d = false        then 1 else 0 end  as no_exercise_flag,
         case when d.is_diagnosed_diabetic = true         then 1 else 0 end  as diabetes_flag,
 
-        -- Poor diet: consuming fruit/veg less than once daily on average
-        -- BRFSS frequency codes: 300=3/day, 200=2/day, 101=once/day, 200=2/week (coded differently)
-        -- Simplified: flag if vegetable consumption < 100 (less than once/day) when available
+        -- Poor diet: "other vegetables" (VEGETAB2) eaten less than once per day.
+        -- vegetable_frequency is already in times/day (see stg_brfss__respondents).
+        -- NULL (module not asked that year, DK/refused) scores 0, like the other flags.
         case
-            when s.vegetable_frequency is not null and s.vegetable_frequency < 100 then 1
+            when s.vegetable_frequency is not null and s.vegetable_frequency < 1 then 1
             else 0
         end                                                                  as poor_diet_flag,
 

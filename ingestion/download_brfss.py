@@ -85,7 +85,8 @@ def download_year(year: int, output_dir: Path, force: bool = False) -> Path:
 
     log.info("Extracting zip for year %d ...", year)
     with zipfile.ZipFile(buffer) as zf:
-        xpt_names = [n for n in zf.namelist() if n.upper().endswith(".XPT")]
+        # Some CDC zips name the member with a trailing space ("LLCP2022.XPT ")
+        xpt_names = [n for n in zf.namelist() if n.strip().upper().endswith(".XPT")]
         if not xpt_names:
             raise ValueError(f"No XPT file found in zip for year {year}. Contents: {zf.namelist()}")
         # CDC may vary casing; take first match

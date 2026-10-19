@@ -14,7 +14,6 @@ Start local Prefect server first for the UI:
 import argparse
 
 from prefect import flow, get_run_logger
-from prefect.task_runners import SequentialTaskRunner
 
 from flows.tasks.ingest_tasks import (
     check_raw_data_exists,
@@ -41,7 +40,8 @@ from ingestion.config import YEARS
         "Downloads CDC XPT files, loads to DuckDB, transforms with dbt, "
         "validates with GE and dbt tests."
     ),
-    task_runner=SequentialTaskRunner(),  # DuckDB requires sequential writes
+    # DuckDB requires sequential writes. Prefect 3 removed SequentialTaskRunner;
+    # tasks below are called directly (never .submit()/.map()), so they run in order.
     retries=0,
     log_prints=True,
 )

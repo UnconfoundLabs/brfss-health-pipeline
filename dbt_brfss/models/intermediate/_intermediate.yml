@@ -38,7 +38,7 @@ models:
         description: Count of metabolic risk factors present (0-5). NULL if all inputs are NULL.
         tests:
           - dbt_utils.expression_is_true:
-              expression: "metabolic_risk_score IS NULL OR metabolic_risk_score BETWEEN 0 AND 5"
+              expression: "IS NULL OR metabolic_risk_score BETWEEN 0 AND 5"
       - name: high_metabolic_risk
         description: True if metabolic_risk_score >= 3.
 
