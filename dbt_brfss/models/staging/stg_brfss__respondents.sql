@@ -7,6 +7,7 @@
     1. Rename raw CDC variable names to readable SQL column names
     2. Decode integer codes to human-readable labels (CASE WHEN)
     3. Fix BMI units: _BMI5 is stored as BMI * 100 (e.g. 2500 = 25.0)
+       and convert fruit/vegetable frequency codes to times per day
     4. Null out refused/don't-know codes so downstream can use IS NULL safely
     5. Filter records with zero or missing survey weight
     6. Join state FIPS codes to state name/abbreviation
@@ -103,6 +104,11 @@ decoded as (
             when 3 then 'Inactive'
             else        null
         end                                as physical_activity_index,
+
+        -- ── Diet (rotating core: NULL in years the module was not asked) ───
+        -- Frequency codes converted to times per day; see brfss_times_per_day macro
+        {{ brfss_times_per_day('fruit2') }}   as fruit_frequency,
+        {{ brfss_times_per_day('vegetab2') }} as vegetable_frequency,
 
         -- ── Demographics ───────────────────────────────────────────────────
         case cast(sexvar as integer)

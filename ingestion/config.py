@@ -69,6 +69,11 @@ COLUMNS_TO_KEEP = [
     "_PSU",       # Primary sampling unit (for variance estimation)
 ]
 
+# Rotating-core variables asked only in some years (odd years for 2021-2023:
+# fruit/vegetable, hypertension awareness, aerobic activity). Missing in an off year
+# is expected; the unified view fills them with NULL. Verify against each year's codebook.
+ROTATING_CORE_COLUMNS = {"FRUIT2", "FRUITJU2", "VEGETAB2", "_RFHYPE6", "_PAINDX3"}
+
 # Map from CDC variable name to clean SQL-safe column name
 # Leading underscores stripped; all lowercase
 COLUMN_NAME_MAP = {col: col.lstrip("_").lower() for col in COLUMNS_TO_KEEP}

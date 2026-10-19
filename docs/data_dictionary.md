@@ -61,7 +61,7 @@ One row per BRFSS survey respondent per year. Foundation for all downstream mode
 | `inactive_flag` | INTEGER | 1 if physically inactive |
 | `no_exercise_flag` | INTEGER | 1 if no exercise in past 30 days |
 | `diabetes_flag` | INTEGER | 1 if diagnosed diabetic |
-| `poor_diet_flag` | INTEGER | 1 if vegetable consumption < daily |
+| `poor_diet_flag` | INTEGER | 1 if other-vegetable (VEGETAB2) consumption < once per day |
 | `metabolic_risk_score` | INTEGER | Sum of above flags (0–5), NULL if all missing |
 | `high_metabolic_risk` | BOOLEAN | True if score ≥ 3 |
 

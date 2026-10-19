@@ -111,9 +111,13 @@ def load_year(con: duckdb.DuckDBPyConnection, year: int, data_dir: Path) -> int:
 
 
 def create_unified_view(con: duckdb.DuckDBPyConnection, years: list[int]) -> None:
-    """Create raw.brfss_all as a UNION ALL view across all year tables."""
+    """Create raw.brfss_all as a UNION ALL view across all year tables.
+
+    Uses UNION ALL BY NAME so years missing a rotating-core column get NULLs
+    instead of a column-count mismatch.
+    """
     union_parts = [f"SELECT * FROM {RAW_SCHEMA}.brfss_{year}" for year in years]
-    union_sql = "\nUNION ALL\n".join(union_parts)
+    union_sql = "\nUNION ALL BY NAME\n".join(union_parts)
     con.execute(f"CREATE OR REPLACE VIEW {RAW_SCHEMA}.brfss_all AS {union_sql}")
     total = con.execute(f"SELECT COUNT(*) FROM {RAW_SCHEMA}.brfss_all").fetchone()[0]
     log.info("Created view %s.brfss_all with %d total rows", RAW_SCHEMA, total)

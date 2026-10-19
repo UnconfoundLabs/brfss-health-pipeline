@@ -1,6 +1,7 @@
 """Prefect tasks for data quality checks."""
 
 import subprocess
+import sys
 from pathlib import Path
 
 from prefect import get_run_logger, task
@@ -18,7 +19,7 @@ def validate_raw_data(years: list[int] = YEARS, db_path: Path = DUCKDB_PATH) -> 
     logger.info("Running Great Expectations raw data validation for years %s ...", years)
 
     result = subprocess.run(
-        ["python", "-m", "expectations.validate_raw", "--years"] + [str(y) for y in years],
+        [sys.executable, "-m", "expectations.validate_raw", "--years"] + [str(y) for y in years],
         capture_output=True,
         text=True,
     )
